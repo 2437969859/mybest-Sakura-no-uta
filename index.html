@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sakura-no-uta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #0b0b0f;
+      color: #eee;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* 左侧栏 */
+    .sidebar {
+      width: 280px;
+      background: #11111a;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #ffb6c1;
+      user-select: none;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: 0.15s;
+      font-size: 13px;
+    }
+
+    .btn-new {
+      flex: 1;
+      background: #ffb6c1;
+      color: #111;
+    }
+
+    .btn-new:hover {
+      opacity: 0.85;
+    }
+
+    .btn-clear {
+      background: rgba(255,255,255,0.08);
+      color: #ddd;
+    }
+
+    .btn-clear:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .note-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .note-item:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .note-item.active {
+      background: rgba(255,182,193,0.15);
+      border: 1px solid rgba(255,182,193,0.4);
+    }
+
+    .note-name {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .note-preview {
+      font-size: 12px;
+      opacity: 0.7;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 右侧编辑区 */
+    .editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      gap: 12px;
+      background: radial-gradient(circle at top, rgba(255,182,193,0.08), transparent 50%);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .note-title-input {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .note-title-input:focus {
+      border-color: rgba(255,182,193,0.6);
+    }
+
+    .btn-delete {
+      background: rgba(255, 80, 80, 0.15);
+      color: #ff7070;
+      border: 1px solid rgba(255, 80, 80, 0.25);
+    }
+
+    .btn-delete:hover {
+      background: rgba(255, 80, 80, 0.25);
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.25);
+      color: #eee;
+      font-size: 14px;
+      line-height: 1.7;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: rgba(255,182,193,0.6);
+    }
+
+    .statusbar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      opacity: 0.7;
+      user-select: none;
+    }
+
+    .statusbar span {
+      color: #ccc;
+    }
+
+    .empty {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.5;
+      font-size: 14px;
+    }
+
+    /* scrollbar */
+    .note-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .note-list::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+    }
+    .note-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.25);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="sidebar">
+      <div class="title">Sakura-no-uta</div>
+
+      <div class="controls">
+        <button class="btn-new" id="newNoteBtn">+ 新建节点</button>
+        <button class="btn-clear" id="exportBtn">导出</button>
+      </div>
+
+      <div class="note-list" id="noteList"></div>
+    </div>
+
+    <div class="editor" id="editorArea">
+      <div class="empty">左侧新建一个节点开始记录。</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "sakura_no_uta_notes_v1";
+
+    let notes = [];
+    let currentId = null;
+
+    function saveNotes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+
+    function loadNotes() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          notes = JSON.parse(raw);
+        } catch {
+          notes = [];
+        }
+      } else {
+        notes = [];
+      }
+    }
+
+    function formatTime(ts) {
+      const d = new Date(ts);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      return `${y}-${m}-${day} ${hh}:${mm}`;
+    }
+
+    function getCurrentNote() {
+      return notes.find(n => n.id === currentId);
+    }
+
+    function renderList() {
+      const noteList = document.getElementById("noteList");
+      noteList.innerHTML = "";
+
+      notes.sort((a, b) => b.updatedAt - a.updatedAt);
+
+      for (const note of notes) {
+        const item = document.createElement("div");
+        item.className = "note-item" + (note.id === currentId ? " active" : "");
+        item.onclick = () => {
+          currentId = note.id;
+          renderList();
+          renderEditor();
+        };
+
+        const name = document.createElement("div");
+        name.className = "note-name";
+        name.textContent = note.title || "未命名节点";
+
+        const preview = document.createElement("div");
+        preview.className = "note-preview";
+        preview.textContent = (note.content || "").replace(/\n/g, " ").slice(0, 40) || "（空）";
+
+        item.appendChild(name);
+        item.appendChild(preview);
+
+        noteList.appendChild(item);
+      }
+    }
+
+    function renderEditor() {
+      const editorArea = document.getElementById("editorArea");
+      editorArea.innerHTML = "";
+
+      const note = getCurrentNote();
+
+      if (!note) {
+        editorArea.innerHTML = `<div class="empty">左侧新建一个节点开始记录。</div>`;
+        return;
+      }
+
+      const topbar = document.createElement("div");
+      topbar.className = "topbar";
+
+      const titleInput = document.createElement("input");
+      titleInput.className = "note-title-input";
+      titleInput.value = note.title;
+      titleInput.placeholder = "节点标题（可改名）";
+
+      titleInput.oninput = () => {
+        note.title = titleInput.value;
+        note.updatedAt = Date.now();
+        saveNotes();
+        renderList();
+        updateStatus();
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn-delete";
+      deleteBtn.textContent = "删除";
+      deleteBtn.onclick = () => {
+        if (!confirm("确定删除该节点？")) return;
+        notes = notes.filter(n => n.id !== note.id);
+        currentId = notes.length ? notes[0].id : null;
+        saveNotes();
+        renderList();
+        renderEditor();
+      };
+
+      topbar.appendChild(titleInput);
+      topbar.appendChild(deleteBtn);
+
+      const textarea = document.createElement("textarea");
+      textarea.value = note.content;
+      textarea.placeholder = "在这里写下你的文字……";
+
+      textarea.oninput = () => {
+        note.content = textarea.value;
+        note.updatedAt = Date.now();
+        saveNotes();
+        renderList();
+        updateStatus();
+      };
+
+      const statusbar = document.createElement("div");
+      statusbar.className = "statusbar";
+
+      const left = document.createElement("span");
+      const right = document.createElement("span");
+
+      function updateStatus() {
+        left.textContent = `最后保存：${formatTime(note.updatedAt)}`;
+        right.textContent = `字数：${(note.content || "").length}`;
+      }
+
+      updateStatus();
+
+      statusbar.appendChild(left);
+      statusbar.appendChild(right);
+
+      editorArea.appendChild(topbar);
+      editorArea.appendChild(textarea);
+      editorArea.appendChild(statusbar);
+    }
+
+    function newNote() {
+      const id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+      const now = Date.now();
+
+      const note = {
+        id,
+        title: "新节点",
+        content: "",
+        createdAt: now,
+        updatedAt: now
+      };
+
+      notes.unshift(note);
+      currentId = id;
+      saveNotes();
+      renderList();
+      renderEditor();
+    }
+
+    function exportNotes() {
+      const data = {
+        exportedAt: new Date().toISOString(),
+        notes
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Sakura-no-uta-notes.json";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("newNoteBtn").onclick = newNote;
+    document.getElementById("exportBtn").onclick = exportNotes;
+
+    loadNotes();
+    currentId = notes.length ? notes[0].id : null;
+    renderList();
+    renderEditor();
+  </script>
+</body>
+</html>
