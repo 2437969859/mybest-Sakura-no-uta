@@ -11,30 +11,35 @@
                    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
 
-    body {
-      margin: 0;
-      background: #0b0b0f;
-      color: #eee;
-      height: 100vh;
-      overflow: hidden;
-    }
+   body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  color: #eee;
+  background: #0b0b0f;
+  position: relative;
+}
 
-    .app {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-    }
+/* 背景图层 */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
-    /* 左侧栏 */
-    .sidebar {
-      width: 280px;
-      background: #11111a;
-      border-right: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-      gap: 12px;
-    }
+  opacity: 0.08; /* 这里调透明度，越小越淡 */
+  z-index: 0;
+}
+
+/* 保证网页内容在背景图之上 */
+.app {
+  position: relative;
+  z-index: 1;
+}
+
 
     .title {
       font-size: 18px;
