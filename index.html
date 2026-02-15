@@ -16,7 +16,7 @@
       margin: 0;
       height: 100vh;
       overflow: hidden;
-      color: #eee;
+      color: #fff;
       background: #0b0b0f;
       position: relative;
     }
@@ -31,31 +31,32 @@
       background-position: center;
       background-repeat: no-repeat;
 
-      opacity: 0.13; /* 越大越明显 */
+      opacity: 0.14; /* 背景透明度：越大越明显 */
       filter: blur(6px);
       transform: scale(1.05);
       z-index: 0;
     }
 
-    /* 页面内容在背景图之上 */
+    /* 主容器 */
     .app {
       position: relative;
       z-index: 1;
       display: flex;
       height: 100vh;
-      width: 100vw;
+      width: 100%;
     }
 
-    /* 左侧栏 */
+    /* 左侧栏玻璃效果 */
     .sidebar {
       width: 280px;
-      background: rgba(17, 17, 26, 0.45);
-      border-right: 1px solid rgba(255,255,255,0.10);
-      backdrop-filter: blur(12px);
       display: flex;
       flex-direction: column;
       padding: 16px;
       gap: 12px;
+
+      background: rgba(0, 0, 0, 0.35);
+      border-right: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(14px);
     }
 
     .title {
@@ -64,6 +65,7 @@
       letter-spacing: 1px;
       color: #ffb6c1;
       user-select: none;
+      text-shadow: 0 0 10px rgba(255,182,193,0.35);
     }
 
     .controls {
@@ -75,15 +77,15 @@
       border: none;
       cursor: pointer;
       padding: 10px 12px;
-      border-radius: 10px;
-      font-weight: 600;
+      border-radius: 12px;
+      font-weight: 700;
       transition: 0.15s;
       font-size: 13px;
     }
 
     .btn-new {
       flex: 1;
-      background: #ffb6c1;
+      background: rgba(255, 182, 193, 0.85);
       color: #111;
     }
 
@@ -93,7 +95,8 @@
 
     .btn-clear {
       background: rgba(255,255,255,0.10);
-      color: #ddd;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
     }
 
     .btn-clear:hover {
@@ -108,50 +111,54 @@
 
     .note-item {
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       background: rgba(255,255,255,0.06);
       margin-bottom: 8px;
       cursor: pointer;
       transition: 0.15s;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
     }
 
     .note-item:hover {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.10);
     }
 
     .note-item.active {
-      background: rgba(255,182,193,0.20);
-      border: 1px solid rgba(255,182,193,0.45);
+      background: rgba(255,182,193,0.22);
+      border: 1px solid rgba(255,182,193,0.55);
     }
 
     .note-name {
-      font-weight: 700;
+      font-weight: 800;
       font-size: 13px;
       margin-bottom: 6px;
       color: #fff;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      text-shadow: 0 0 10px rgba(0,0,0,0.4);
     }
 
     .note-preview {
       font-size: 12px;
-      opacity: 0.75;
+      opacity: 0.85;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      color: rgba(255,255,255,0.85);
     }
 
-    /* 右侧编辑区 */
+    /* 右侧编辑区玻璃效果 */
     .editor {
       flex: 1;
       display: flex;
       flex-direction: column;
       padding: 18px;
       gap: 12px;
-      background: rgba(0,0,0,0.12);
-      backdrop-filter: blur(10px);
+
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(14px);
     }
 
     .topbar {
@@ -160,63 +167,79 @@
       gap: 10px;
     }
 
-    /* 节点标题输入框 */
+    /* 标题输入框（玻璃透明） */
     .note-title-input {
       flex: 1;
       padding: 12px 14px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.08);
       color: #fff;
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       outline: none;
       backdrop-filter: blur(10px);
     }
 
+    .note-title-input::placeholder {
+      color: rgba(255,255,255,0.55);
+    }
+
     .note-title-input:focus {
-      border-color: rgba(255,182,193,0.8);
+      border-color: rgba(255,182,193,0.75);
+      box-shadow: 0 0 0 3px rgba(255,182,193,0.12);
     }
 
     .btn-delete {
-      background: rgba(255, 80, 80, 0.18);
-      color: #ff7070;
-      border: 1px solid rgba(255, 80, 80, 0.28);
+      background: rgba(255, 80, 80, 0.22);
+      color: #fff;
+      border: 1px solid rgba(255, 80, 80, 0.35);
+      font-weight: 800;
     }
 
     .btn-delete:hover {
-      background: rgba(255, 80, 80, 0.28);
+      background: rgba(255, 80, 80, 0.35);
     }
 
-    /* 文本编辑框 */
+    /* 编辑文本框（玻璃透明） */
     textarea {
       flex: 1;
       resize: none;
       padding: 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.18);
       background: rgba(255,255,255,0.06);
-      color: #eee;
+      color: #fff;
       font-size: 14px;
       line-height: 1.7;
       outline: none;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      text-shadow: 0 0 12px rgba(0,0,0,0.35);
+    }
+
+    textarea::placeholder {
+      color: rgba(255,255,255,0.55);
     }
 
     textarea:focus {
-      border-color: rgba(255,182,193,0.8);
+      border-color: rgba(255,182,193,0.75);
+      box-shadow: 0 0 0 3px rgba(255,182,193,0.12);
     }
 
+    /* 底部状态栏（透明） */
     .statusbar {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
-      opacity: 0.75;
       user-select: none;
-    }
 
-    .statusbar span {
-      color: #ddd;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
+
+      color: rgba(255,255,255,0.8);
     }
 
     .empty {
@@ -224,20 +247,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 0.7;
+      opacity: 0.75;
       font-size: 14px;
+
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(12px);
     }
 
     /* scrollbar */
     .note-list::-webkit-scrollbar {
       width: 6px;
     }
+
     .note-list::-webkit-scrollbar-thumb {
       background: rgba(255,255,255,0.20);
       border-radius: 10px;
     }
+
     .note-list::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,255,255,0.30);
+      background: rgba(255,255,255,0.35);
     }
   </style>
 </head>
@@ -448,4 +478,3 @@
   </script>
 </body>
 </html>
-
