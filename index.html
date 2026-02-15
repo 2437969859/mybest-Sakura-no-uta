@@ -25,16 +25,18 @@ body::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("assets/bg.jpg");
+  background-image: url("assets/782B0DB04B0E4B3F910ADD20FB990F40.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  opacity: 0.08; /* 这里调透明度，越小越淡 */
+  opacity: 0.05;   /* 数值越小越透明 */
+  filter: blur(6px);
+  transform: scale(1.05);
   z-index: 0;
 }
 
-/* 保证网页内容在背景图之上 */
+/* 页面内容在背景图之上 */
 .app {
   position: relative;
   z-index: 1;
